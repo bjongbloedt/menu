@@ -3,8 +3,10 @@ FROM python:3.6
 WORKDIR /usr/src/app
 
 # Setup requirements
-COPY requirements requirements
-RUN pip install --no-cache-dir -r requirements/prod.txt
+COPY Pipfile Pipfile
+COPY Pipfile.lock Pipfile.lock
+RUN pip install pipenv
+RUN pipenv install --ignore-pipfile --system
 
 # Copy api src
 COPY . .
