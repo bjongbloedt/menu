@@ -34,16 +34,4 @@ def test_ping_request(client_empty_db):
     response = client_empty_db.get('http://localhost/healthz')
     assert response.status_code == 200
     assert response.json() == {'message': 'ok'}
-
-def test_add_menu_request(client_empty_db):
-    """
-    Test adding a menu
-    """
-    response = client_empty_db.post('http://localhost/menu/v1/menus', json={
-        'name': 'test',
-        'description': 'stuff'
-    })
-    assert response.status_code == 201
-
-    assert response.json()['name'] == 'test'
-    assert response.json()['description'] == 'stuff'
+    

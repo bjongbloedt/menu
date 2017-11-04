@@ -4,7 +4,7 @@ from sqlalchemy import Column, String, Float, ForeignKey
 
 Base = declarative_base()
 
-class Items(Base):
+class ItemsModel(Base):
     __tablename__ = "items"
     id = Column(String, primary_key=True)
     name = Column(String)
@@ -14,8 +14,15 @@ class Items(Base):
     menu_id = Column(String, ForeignKey("menus.id"))
 
 
-class Menus(Base):
+class MenusModel(Base):
     __tablename__ = "menus"
     id = Column(String, primary_key=True)
     name = Column(String)
     description = Column(String)
+    restaurant_id = Column(String, ForeignKey("restaurants.id"))
+
+
+class RestaurantsModel(Base):
+    __tablename__ = "restaurants"
+    id = Column(String, primary_key=True)
+    name = Column(String)

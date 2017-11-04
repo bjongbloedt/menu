@@ -21,7 +21,8 @@ class MenusSchema(typesystem.Object):
     properties = {
         'id': typesystem.String,
         'name': typesystem.String,
-        'description': typesystem.String
+        'description': typesystem.String,
+        'restaurant_id': typesystem.String
     }
 
 
