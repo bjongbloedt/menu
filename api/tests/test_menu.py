@@ -1,6 +1,6 @@
-from apistar.test import TestClient
-from app import app
 from project.views import get_items_for_menu, get_menu_by_id, ping
+from project.models import Menus as MenuModel
+from project.models import Items as ItemModel
 
 
 def test_ping():
@@ -11,53 +11,80 @@ def test_ping():
     assert data == {'message': 'ok'}
 
 
-def test_ping_request():
-    """
-    Test ping
-    """
-    client = TestClient(app)
-    response = client.get('http://localhost/healthz')
-    assert response.status_code == 200
-    assert response.json() == {'message': 'ok'}
-
-
-def test_get_menu_by_id():
+def test_get_menu_by_id(db_session):
     """
     Test getting a single menu
     """
-    data = get_menu_by_id('1')
+    menu = MenuModel(id="1", name="my first menu", description="The best first menu")
+    db_session.add(menu)
+    db_session.commit()
+
+    data = get_menu_by_id(db_session, '1')
     assert data == {'id': '1', 'name': 'my first menu',
                     'description': 'The best first menu'}
 
-
-def test_get_menu_by_id_request():
+def test_get_menu_by_id_should_return_error(db_session):
     """
     Test getting a single menu
     """
-    client = TestClient(app)
-    response = client.get('http://localhost/menu/v1/menus/3')
-    assert response.status_code == 200
-    assert response.json() ==\
-        {'id': '3', 'name': 'my first menu', 'description': 'The best first menu'}
+    data = get_menu_by_id(db_session, '1234123')
+    assert data.content ==\
+        {'message': 'menu with id 1234123 was not found'}
 
 
-def test_get_items_for_menu():
+def test_get_items_for_menu_should_return_items_on_menu(db_session):
     """
     Test getting all items for a menu
     """
-    data = get_items_for_menu('1')
+    menu = MenuModel(id="2", name="my first menu", description="The best first menu")
+    db_session.add(menu)
+    db_session.commit()
+    item = ItemModel(id="1", name='A menu item', price=9.99, image="http://google.com", section="dessert", menu_id="2")
+    db_session.add(item)
+    db_session.commit()
+    itemtwo = ItemModel(id="3", name='A menu item', price=9.99, image="http://google.com", section="dessert", menu_id="3")
+    db_session.add(itemtwo)
+    db_session.commit()
+
+    data = get_items_for_menu(db_session, '2')
     assert data ==\
         [{'id': '1', 'name': 'A menu item', 'price': 9.99,
           'image': 'http://google.com', 'section': 'dessert'}]
 
+def test_get_items_for_menu_should_return_error_if_menu_is_not_found(db_session):
+    """
+    Test getting all items for a menu
+    """
+    menu = MenuModel(id="2", name="my first menu", description="The best first menu")
+    db_session.add(menu)
+    db_session.commit()
+    item = ItemModel(id="1", name='A menu item', price=9.99, image="http://google.com", section="dessert", menu_id="2")
+    db_session.add(item)
+    db_session.commit()
+    itemtwo = ItemModel(id="3", name='A menu item', price=9.99, image="http://google.com", section="dessert", menu_id="3")
+    db_session.add(itemtwo)
+    db_session.commit()
 
-def test_get_items_for_menu_request():
+    data = get_items_for_menu(db_session, '50')
+    assert data.content ==\
+        {'message': 'items for the menu with id 50 were not found'}
+
+def test_get_items_for_menu_should_return_empty_list_if_no_items_match_menu_id(db_session):
     """
-    Test getting a single menu
+    Test getting all items for a menu
     """
-    client = TestClient(app)
-    response = client.get('http://localhost/menu/v1/menus/1/items')
-    assert response.status_code == 200
-    assert response.json() ==\
-        [{'id': '1', 'name': 'A menu item', 'price': 9.99,
-          'image': 'http://google.com', 'section': 'dessert'}]
+    menu = MenuModel(id="12345", name="my first menu", description="The best first menu")
+    db_session.add(menu)
+    db_session.commit()
+    item = ItemModel(id="1", name='A menu item', price=9.99, image="http://google.com", section="dessert", menu_id="3")
+    db_session.add(item)
+    db_session.commit()
+    itemtwo = ItemModel(id="3", name='A menu item', price=9.99, image="http://google.com", section="dessert", menu_id="3")
+    db_session.add(itemtwo)
+    db_session.commit()
+
+    data = get_items_for_menu(db_session, '12345')
+    assert data.content ==\
+        {'message': 'items for the menu with id 12345 were not found'}
+
+
