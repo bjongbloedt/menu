@@ -34,3 +34,12 @@ class AddMenuRequestSchema(typesystem.Object):
         'name': typesystem.String,
         'description': typesystem.String
     }
+
+class RestaurantsSchema(typesystem.Object):
+    """
+    Restaurant Schema
+    """
+    properties = {
+        'id': typesystem.String,
+        'name': typesystem.String
+    }

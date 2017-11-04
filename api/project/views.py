@@ -1,6 +1,6 @@
 import typing
 import uuid
-from project.schemas import MenusSchema, ItemsSchema, AddMenuRequestSchema
+from project.schemas import MenusSchema, ItemsSchema, AddMenuRequestSchema, RestaurantsSchema
 from project.models import ItemsModel, MenusModel, RestaurantsModel
 from apistar.backends.sqlalchemy_backend import Session
 from apistar import Response
@@ -54,3 +54,13 @@ def add_menu_to_restaurant(session: Session, rest_id: str, menu_request: AddMenu
     session.add(menu)
     session.commit()
     return Response(MenusSchema(id=menu.id, name=menu.name, description=menu.description, restaurant_id=menu.restaurant_id), status=201)
+
+def get_restaurant_by_id(session: Session, restaurant_id: str):
+    """
+    Gets a specific restaurant by id
+    """
+    query = session.query(RestaurantsModel).filter(RestaurantsModel.id == restaurant_id).first()
+    if(query is None):
+        data = {'message': f'restaurant with id {restaurant_id} was not found'}
+        return Response(data, status=404)
+    return RestaurantsSchema(query)

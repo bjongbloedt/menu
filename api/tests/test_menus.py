@@ -1,15 +1,6 @@
-import json
 from project.views import get_items_for_menu, get_menu_by_id, ping, get_menus, add_menu_to_restaurant
 from project.models import MenusModel, ItemsModel, RestaurantsModel
 from project.schemas import MenusSchema, ItemsSchema, AddMenuRequestSchema
-
-
-def test_ping():
-    """
-    Test ping
-    """
-    data = ping()
-    assert data == {'message': 'ok'}
 
 
 def test_get_menu_by_id(db_session):
