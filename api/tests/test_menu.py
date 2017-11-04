@@ -1,6 +1,8 @@
-from project.views import get_items_for_menu, get_menu_by_id, ping, get_menus
+import json
+from project.views import get_items_for_menu, get_menu_by_id, ping, get_menus, add_menu
 from project.models import Menus as MenuModel
 from project.models import Items as ItemModel
+from project.schemas import MenusSchema, ItemsSchema, AddMenuRequestSchema
 
 
 def test_ping():
@@ -108,3 +110,26 @@ def test_get_menus_should_return_NotFound_when_no_menus(db_session):
     """
     data = get_menus(db_session)
     assert data.content == {'message': 'no menus were found'}
+
+
+def test_add_new_menu_should_create_new_menu(db_session):
+    """
+    Test that a new menu can be added
+    """
+    data = add_menu(db_session, {'name': 'new menu', 'description': 'A new menu'})
+    assert data.status == 201
+    assert data.content['name'] == 'new menu'
+    assert data.content['description'] == 'A new menu'
+
+    query = db_session.query(MenuModel).filter(MenuModel.id == data.content['id']).first()
+    assert query is not None
+
+
+def test_add_new_menu_should_return_invalid_when_request_is_incorrect(db_session):
+    """
+    Test that a new menu can be added
+    """
+    data = add_menu(db_session, {})
+    assert data.status == 400
+    print(data.content)
+    assert data.content == {'message': 'menu request invalid'}

@@ -8,7 +8,7 @@ class Env(environment.Environment):
     """
     properties = {
         'DEBUG': typesystem.boolean(default=False),
-        'DATABASE_URL': typesystem.string(default='sqlite://')
+        'DATABASE_URL': typesystem.string(default='sqlite:///local.db')
     }
 
 env = Env()

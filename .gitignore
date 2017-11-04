@@ -102,3 +102,4 @@ ENV/
 
 .vscode
 test.db
+local.db

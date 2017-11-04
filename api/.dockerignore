@@ -1,1 +1,4 @@
-tests.py
+tests/
+local.db
+__pycache__
+.cache

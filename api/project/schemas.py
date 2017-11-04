@@ -1,7 +1,7 @@
 from apistar import typesystem
 
 
-class Item(typesystem.Object):
+class ItemsSchema(typesystem.Object):
     """
     Menu item schema
     """
@@ -13,12 +13,23 @@ class Item(typesystem.Object):
         'section': typesystem.String
     }
 
-class Menu(typesystem.Object):
+
+class MenusSchema(typesystem.Object):
     """
     Menu schema
     """
     properties = {
         'id': typesystem.String,
+        'name': typesystem.String,
+        'description': typesystem.String
+    }
+
+
+class AddMenuRequestSchema(typesystem.Object):
+    """
+    Request to add new menu
+    """
+    properties = {
         'name': typesystem.String,
         'description': typesystem.String
     }
