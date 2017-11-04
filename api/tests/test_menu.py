@@ -1,4 +1,4 @@
-from project.views import get_items_for_menu, get_menu_by_id, ping
+from project.views import get_items_for_menu, get_menu_by_id, ping, get_menus
 from project.models import Menus as MenuModel
 from project.models import Items as ItemModel
 
@@ -88,3 +88,23 @@ def test_get_items_for_menu_should_return_empty_list_if_no_items_match_menu_id(d
         {'message': 'items for the menu with id 12345 were not found'}
 
 
+def test_get_menus_should_return_all_menus(db_session):
+    """
+    Test that all menus are returned
+    """
+    db_session.add_all([
+        MenuModel(id="12345", name="my first menu", description="The best first menu"),
+        MenuModel(id="54321", name="my first menu", description="The best first menu")
+    ])
+    db_session.commit()
+
+    data = get_menus(db_session)
+    assert len(data) == 2
+
+
+def test_get_menus_should_return_NotFound_when_no_menus(db_session):
+    """
+    Test that NotFound is returned when there are no menus 
+    """
+    data = get_menus(db_session)
+    assert data.content == {'message': 'no menus were found'}

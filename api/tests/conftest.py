@@ -4,6 +4,9 @@ import uuid
 from project.models import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from apistar.test import TestClient
+from app import app
+
 
 @pytest.fixture(scope="function")
 def db_session():
@@ -22,3 +25,10 @@ def db_session():
     session.close()
     Base.metadata.drop_all(bind=test_engine)
     test_engine.dispose()
+
+
+@pytest.fixture(scope="function")
+def client_empty_db():
+    app.main(['create_tables'])
+    yield TestClient(app)
+    app.main(['drop_tables'])

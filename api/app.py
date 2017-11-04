@@ -1,15 +1,7 @@
 from apistar.frameworks.wsgi import WSGIApp as App
 from apistar.backends import sqlalchemy_backend
 from project.routes import routes
-from project.models import Base
-
-
-settings = {
-    "DATABASE": {
-        "URL": "sqlite:///test.db",
-        "METADATA": Base.metadata
-    }
-}
+from project.settings import settings
 
 
 app = App(

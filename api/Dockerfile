@@ -11,6 +11,10 @@ RUN pipenv install --ignore-pipfile --system
 # Copy api src
 COPY . .
 
+# Adding inmem db for this example
+ENV DATABASE_URL "sqlite:///docker.db"
+RUN python load_db.py
+
 EXPOSE 5000
 
 # Run api

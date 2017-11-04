@@ -23,6 +23,17 @@ def get_menu_by_id(session: Session, menu_id: str) -> MenuSchema:
         return Response(data, status=404)
     return MenuSchema(query)
 
+def get_menus(session: Session) -> MenuSchema:
+    """
+    Gets a specific menu by id
+    """
+    query = session.query(MenuModel).all()
+    if(len(query) == 0):
+        data = {'message': 'no menus were found'}
+        return Response(data, status=404)
+    return [MenuSchema(i) for i in query]
+
+
 def get_items_for_menu(session: Session, menu_id: str) -> typing.List[ItemSchema]:
     """
     Gets all of the items for the given menu_id
