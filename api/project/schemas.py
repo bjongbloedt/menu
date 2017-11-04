@@ -43,3 +43,11 @@ class RestaurantsSchema(typesystem.Object):
         'id': typesystem.String,
         'name': typesystem.String
     }
+
+class AddRestaurantSchema(typesystem.Object):
+    """
+    Request to add new restaurant
+    """
+    properties = {
+        'name': typesystem.String
+    }

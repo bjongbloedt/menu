@@ -144,4 +144,5 @@ def test_add_new_menu_should_return_invalid_when_request_is_incorrect(db_session
     db_session.commit()
 
     data = add_menu_to_restaurant(db_session, "1", {})
+    assert data.status == 400
     assert data.content == {'message': 'menu request invalid'}
