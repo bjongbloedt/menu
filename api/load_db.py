@@ -11,7 +11,11 @@ Base.metadata.create_all(test_engine)
 Session = sessionmaker(bind=test_engine)
 session = Session()
 
-menu_one = Menus(id=str(uuid.uuid4()), name="A great menu", description="A great menu")
+restaurant = RestaurantsModel(id=str(uuid.uuid4()), name='Cool place')
+db_session.add(restaurant)
+db_session.commit()
+
+menu_one = Menus(id=str(uuid.uuid4()), name="A great menu", description="A great menu", restaurant_id=restaurant.id)
 session.add(menu_one)
 session.commit()
 
