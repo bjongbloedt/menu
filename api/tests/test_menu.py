@@ -1,5 +1,6 @@
 from apistar.test import TestClient
-from app import app, get_items_for_menu, get_menu_by_id, ping
+from app import app
+from project.views import get_items_for_menu, get_menu_by_id, ping
 
 
 def test_ping():
