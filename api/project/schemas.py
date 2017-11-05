@@ -10,9 +10,20 @@ class ItemsSchema(typesystem.Object):
         'name': typesystem.String,
         'price': typesystem.Number,
         'image': typesystem.String,
-        'section': typesystem.String
+        'section': typesystem.String,
+        'menu_id': typesystem.String
     }
 
+class AddItemRequestSchema(typesystem.Object):
+    """
+    Menu item schema
+    """
+    properties = {
+        'name': typesystem.String,
+        'price': typesystem.Number,
+        'image': typesystem.String,
+        'section': typesystem.String
+    }
 
 class MenusSchema(typesystem.Object):
     """

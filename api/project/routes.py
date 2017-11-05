@@ -11,7 +11,8 @@ from project.views import (
     update_restaurant_name,
     remove_restaurant,
     update_menu,
-    remove_menu
+    remove_menu,
+    add_item_to_menu
 )
 
 restaurants_routes = [
@@ -27,6 +28,7 @@ menus_routes = [
     Route('/{menu_id}', 'GET', get_menu_by_id),
     Route('', 'GET', get_menus),
     Route('/{menu_id}/items', 'GET', get_items_for_menu),
+    Route('/{menu_id}/items', 'POST', add_item_to_menu),
     Route('/{menu_id}', 'PUT', update_menu),
     Route('/{menu_id}', 'DELETE', remove_menu)
 ]

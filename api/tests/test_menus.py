@@ -56,7 +56,7 @@ def test_get_items_for_menu_should_return_items_on_menu(db_session):
     data = get_items_for_menu(db_session, '2')
     assert data ==\
         [{'id': '1', 'name': 'A menu item', 'price': 9.99,
-          'image': 'http://google.com', 'section': 'dessert'}]
+          'image': 'http://google.com', 'section': 'dessert', 'menu_id': '2'}]
 
 def test_get_items_for_menu_should_return_error_if_menu_is_not_found(db_session):
     """

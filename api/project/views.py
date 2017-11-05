@@ -10,7 +10,8 @@ from project.schemas import (
     RestaurantsSchema,
     AddRestaurantSchema,
     UpdateRestaurantSchema,
-    UpdateMenusSchema
+    UpdateMenusSchema,
+    AddItemRequestSchema
 )
 
 
@@ -170,3 +171,15 @@ def remove_menu(session: Session, menu_id: str):
         data = {'message': f'unable to delete menu {menu_id}'}
         return Response(data, status=404)
     return Response({}, status=204)
+
+def add_item_to_menu(session: Session, menu_id: str, item_request: AddItemRequestSchema) -> ItemsSchema:
+    """
+    Adds a new Item
+    """
+    if not item_request:
+        data = {'message': 'item request invalid'}
+        return Response(data, status=400)
+    item = ItemsModel(id=str(uuid.uuid4()), name=item_request['name'], price=item_request['price'], image=item_request['image'], section=item_request['section'], menu_id=menu_id)
+    session.add(item)
+    session.commit()
+    return Response(ItemsSchema(id=item.id, name=item.name, price=item.price, image=item.image, section=item.section, menu_id=menu_id), status=201)

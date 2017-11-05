@@ -66,14 +66,18 @@ def test_menu_client_workflow(client_empty_db):
     assert change_name_response.json()['id'] == menu_id
 
     # Add a item
-    # add_menu_request = client_empty_db.post(f'http://localhost/menu/v1/menus/{menu_id}/items', json={
-    #     'name': 'A cool menu',
-    #     'description': 'a really cool menu'
-    # })
-    # assert add_menu_request.status_code == 201
-    # assert add_menu_request.json()['name'] == 'A cool menu'
-    # assert add_menu_request.json()['description'] == 'a really cool menu'
-    # assert add_menu_request.json()['id'] is not None
+    add_item_request = client_empty_db.post(f'http://localhost/menu/v1/menus/{menu_id}/items', json={
+        'name': 'Really nice cake',
+        'price': 9.99,
+        'image': 'http://image.com/image',
+        'section': 'desserts'
+    })
+    assert add_item_request.status_code == 201
+    assert add_item_request.json()['name'] == 'Really nice cake'
+    assert add_item_request.json()['price'] == 9.99
+    assert add_item_request.json()['image'] == 'http://image.com/image'
+    assert add_item_request.json()['menu_id'] == menu_id
+    assert add_item_request.json()['id'] is not None
 
     # Get the menu
     get_menu = client_empty_db.get(f'http://localhost/menu/v1/menus/{menu_id}')
