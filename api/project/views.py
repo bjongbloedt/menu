@@ -77,3 +77,29 @@ def add_restaurant(session: Session, restaurant_request: AddRestaurantSchema) ->
     session.add(restaurant)
     session.commit()
     return Response(RestaurantsSchema(id=restaurant.id, name=restaurant.name), status=201)
+
+def get_restaurants(session: Session) -> typing.List[RestaurantsSchema]:
+    """
+    Gets a list of restaurants
+    """
+    query = session.query(RestaurantsModel).all()
+    if(len(query) == 0):
+        data = {'message': 'no restaurants were found'}
+        return Response(data, status=404)
+    return [RestaurantsSchema(i) for i in query]
+
+def update_restaurant_name(session: Session, restaurant_id: str, name: str) -> RestaurantsSchema:
+    """
+    update the name of the restaurant
+    """
+    if(len(name) <= 0):
+        data = {'message': f'unable to update restaurant {restaurant_id} with name {name}'}
+        return Response(data, status=400)
+    update = session.query(RestaurantsModel) \
+        .filter(RestaurantsModel.id==restaurant_id) \
+        .update({"name": name})
+    session.commit()
+    if(update < 1):
+        data = {'message': f'unable to update restaurant {restaurant_id} with name {name}'}
+        return Response(data, status=404)
+    return Response(RestaurantsSchema(id=restaurant_id, name=name), status=200)

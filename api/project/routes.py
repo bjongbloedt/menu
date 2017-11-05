@@ -1,15 +1,30 @@
 from apistar import Include, Route
 from apistar.handlers import docs_urls
-from project.views import get_items_for_menu, get_menu_by_id, get_menus, ping, add_menu_to_restaurant, get_restaurant_by_id, add_restaurant
+from project.views import get_items_for_menu, get_menu_by_id, get_menus, ping, add_menu_to_restaurant, get_restaurant_by_id, add_restaurant, get_restaurants, update_restaurant_name
 
+restaurants_routes = [
+    Route('/{rest_id}/menus', 'POST', add_menu_to_restaurant),
+    Route('/{restaurant_id}', 'GET', get_restaurant_by_id),
+    Route('/', 'GET', get_restaurants),
+    Route('/{restaurant_id}', 'PUT', update_restaurant_name),
+    Route('/', 'POST', add_restaurant),
+]
+
+menus_routes = [
+    Route('/{menu_id}', 'GET', get_menu_by_id),
+    Route('/', 'GET', get_menus),
+    Route('/{menu_id}/items', 'GET', get_items_for_menu),
+]
+
+items_routes = [
+
+]
 
 routes = [
-    Route('/menu/v1/menus/{menu_id}', 'GET', get_menu_by_id),
-    Route('/menu/v1/menus', 'GET', get_menus),
-    Route('/menu/v1/menus/{menu_id}/items', 'GET', get_items_for_menu),
-    Route('/menu/v1/restaurants/{rest_id}/menus', 'POST', add_menu_to_restaurant),
-    Route('/menu/v1/restaurants/{restaurant_id}', 'GET', get_restaurant_by_id),
-    Route('/menu/v1/restaurants', 'POST', add_restaurant),
     Route('/healthz', 'GET', ping),
-    Include('/docs', docs_urls)
+    Include('/docs', docs_urls),
+    Include('/menu/v1/restaurants', restaurants_routes),
+    Include('/menu/v1/menus', menus_routes),
+    Include('/menu/v1/items', items_routes)
+
 ]
