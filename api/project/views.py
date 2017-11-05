@@ -193,3 +193,18 @@ def get_menus_for_restaurant(session: Session, restaurant_id: str) -> typing.Lis
         data = {'message': f'menus for the restaurant with id {restaurant_id} were not found'}
         return Response(data, status=404)
     return Response([MenusSchema(i) for i in query], 200)
+
+def remove_item(session: Session, item_id: str):
+    """
+    remove a item
+    """
+    if(len(item_id) <= 0):
+        data = {'message': f'must provide id'}
+        return Response(data, status=400)
+    update = session.query(ItemsModel) \
+        .filter(ItemsModel.id==item_id) \
+        .delete()
+    if(update < 1):
+        data = {'message': f'unable to delete item {item_id}'}
+        return Response(data, status=404)
+    return Response({}, status=204)

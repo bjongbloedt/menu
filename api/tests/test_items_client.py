@@ -1,0 +1,43 @@
+def test_item_client_workflow(client_empty_db):
+    # Create new restaurant
+    response = client_empty_db.post('http://localhost/menu/v1/restaurants', json={
+        'name': 'Cool place'
+    })
+    assert response.status_code == 201
+    assert response.json()['name'] == 'Cool place'
+    restaurant_id = response.json()['id']
+    assert restaurant_id is not None
+
+    # Create new menu
+    create_menu_response = client_empty_db.post(f'http://localhost/menu/v1/restaurants/{restaurant_id}/menus', json={
+        'name': 'Cool place, first menu',
+        'description': 'A really great menu'
+    })
+    assert create_menu_response.status_code == 201
+    assert create_menu_response.json()['name'] == 'Cool place, first menu'
+    assert create_menu_response.json()['description'] == 'A really great menu'
+    menu_id = create_menu_response.json()['id']
+    assert menu_id is not None
+
+    # Create new item
+    create_item_response = client_empty_db.post(f'http://localhost/menu/v1/menus/{menu_id}/items', json={
+        'name': 'root beer',
+        'price': 1.99,
+        'image': 'http://image-of-rootbeer.net',
+        'section': 'drinks'
+    })
+    assert create_item_response.status_code == 201
+    assert create_item_response.json()['name'] == 'root beer'
+    assert create_item_response.json()['price'] == 1.99
+    assert create_item_response.json()['image'] == 'http://image-of-rootbeer.net'
+    assert create_item_response.json()['section'] == 'drinks'
+    item_id = create_item_response.json()['id']
+    assert item_id is not None
+
+    # Get items by menu
+
+    # Get item
+
+    # Delete Item
+    remove_item_response = client_empty_db.delete(f'http://localhost/menu/v1/items/{item_id}')
+    assert remove_item_response.status_code == 204

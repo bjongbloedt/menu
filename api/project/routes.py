@@ -13,7 +13,8 @@ from project.views import (
     update_menu,
     remove_menu,
     add_item_to_menu,
-    get_menus_for_restaurant
+    get_menus_for_restaurant,
+    remove_item
 )
 
 restaurants_routes = [
@@ -36,6 +37,7 @@ menus_routes = [
 ]
 
 items_routes = [
+    Route('/{item_id}', 'DELETE', remove_item)
 
 ]
 
