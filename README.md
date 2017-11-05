@@ -83,3 +83,4 @@ Pipfile.lock -> pipenv file for deps
 1. Split out schemas, views files into smaller chunks
 1. Hook up to containerized db in docker-compose env
 1. Get alembic rigged up for db migrations
+1. Need to add cascading delete so that when a Restaurant is deleted, its child menus, and items are also deleted.  Otherwise database will fill up with data that doesn't need to be there.
