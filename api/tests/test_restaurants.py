@@ -50,7 +50,8 @@ def test_get_restaurants_should_resturn_all_restaurants(db_session):
     db_session.commit()
 
     data = get_restaurants(db_session)
-    assert len(data) == 3
+    assert data.status == 200
+    assert len(data.content) == 3
 
 def test_get_menus_should_return_NotFound_when_no_menus(db_session):
     """

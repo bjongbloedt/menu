@@ -23,7 +23,8 @@ def test_get_menu_by_id(db_session):
     db_session.commit()
 
     data = get_menu_by_id(db_session, '1')
-    assert data == {'id': '1', 'name': 'my first menu',
+    assert data.status == 200
+    assert data.content == {'id': '1', 'name': 'my first menu',
                     'description': 'The best first menu',
                     'restaurant_id': '1'}
 
@@ -32,6 +33,7 @@ def test_get_menu_by_id_should_return_error(db_session):
     Test getting a single menu
     """
     data = get_menu_by_id(db_session, '1234123')
+    assert data.status == 404
     assert data.content ==\
         {'message': 'menu with id 1234123 was not found'}
 
@@ -54,7 +56,8 @@ def test_get_items_for_menu_should_return_items_on_menu(db_session):
     db_session.commit()
 
     data = get_items_for_menu(db_session, '2')
-    assert data ==\
+    assert data.status == 200
+    assert data.content ==\
         [{'id': '1', 'name': 'A menu item', 'price': 9.99,
           'image': 'http://google.com', 'section': 'dessert', 'menu_id': '2'}]
 
@@ -115,7 +118,8 @@ def test_get_menus_should_return_all_menus(db_session):
     db_session.commit()
 
     data = get_menus(db_session)
-    assert len(data) == 2
+    assert data.status == 200
+    assert len(data.content) == 2
 
 
 def test_get_menus_should_return_NotFound_when_no_menus(db_session):

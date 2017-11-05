@@ -29,7 +29,7 @@ def get_menu_by_id(session: Session, menu_id: str) -> MenusSchema:
     if(query is None):
         data = {'message': f'menu with id {menu_id} was not found'}
         return Response(data, status=404)
-    return MenusSchema(query)
+    return Response(MenusSchema(query), 200)
 
 def get_menus(session: Session) -> MenusSchema:
     """
@@ -39,7 +39,7 @@ def get_menus(session: Session) -> MenusSchema:
     if(len(query) == 0):
         data = {'message': 'no menus were found'}
         return Response(data, status=404)
-    return [MenusSchema(i) for i in query]
+    return Response([MenusSchema(i) for i in query], 200)
 
 def get_items_for_menu(session: Session, menu_id: str) -> typing.List[ItemsSchema]:
     """
@@ -49,7 +49,7 @@ def get_items_for_menu(session: Session, menu_id: str) -> typing.List[ItemsSchem
     if(len(query) == 0):
         data = {'message': f'items for the menu with id {menu_id} were not found'}
         return Response(data, status=404)
-    return [ItemsSchema(i) for i in query]
+    return Response([ItemsSchema(i) for i in query], status=200)
 
 def add_menu_to_restaurant(session: Session, rest_id: str, menu_request: AddMenuRequestSchema) -> MenusSchema:
     """
@@ -72,7 +72,7 @@ def get_restaurant_by_id(session: Session, restaurant_id: str) -> RestaurantsSch
     if(query is None):
         data = {'message': f'restaurant with id {restaurant_id} was not found'}
         return Response(data, status=404)
-    return RestaurantsSchema(query)
+    return Response(RestaurantsSchema(query), status=200)
 
 def add_restaurant(session: Session, restaurant_request: AddRestaurantSchema) -> RestaurantsSchema:
     """
@@ -95,7 +95,7 @@ def get_restaurants(session: Session) -> typing.List[RestaurantsSchema]:
     if(len(query) == 0):
         data = {'message': 'no restaurants were found'}
         return Response(data, status=404)
-    return [RestaurantsSchema(i) for i in query]
+    return Response([RestaurantsSchema(i) for i in query], status=200)
 
 def update_restaurant_name(session: Session, restaurant_id: str, update_request: UpdateRestaurantSchema) -> RestaurantsSchema:
     """

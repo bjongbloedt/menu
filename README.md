@@ -56,3 +56,28 @@ pipenv shell
 # run the tests
 apistar test
 ```
+
+## Project structure
+```
+api
+    project/
+      models.py -> Location of sqlalchemy models
+      routes.py -> api routes setup
+      schemas.py -> Schema for request and response from views
+      settings.py -> Generic settings for application
+      views.py -> Handlers for the routes
+    tests/
+app.py -> File that pulls together the various project elements into runnable api
+Dockerfile
+load_db.py -> script to boostrap data into database
+Pipfile -> pipenv file for deps
+Pipfile.lock -> pipenv file for deps
+```
+
+## Next steps
+
+1. Add route for `patch`ing fields on items
+1. Improve documentation on schemas, and routes
+1. Split out schemas, views files into smaller chunks
+1. Hook up to containerized db in docker-compose env
+1. Get alembic rigged up for db migrations

@@ -1,5 +1,5 @@
 from apistar import Include, Route
-from apistar.handlers import docs_urls
+from apistar.handlers import docs_urls, static_urls
 from project.views import (
     get_items_for_menu,
     get_menu_by_id,
@@ -46,6 +46,7 @@ items_routes = [
 routes = [
     Route('/healthz', 'GET', ping),
     Include('/docs', docs_urls),
+    Include('/static', static_urls),
     Include('/menu/v1/restaurants', restaurants_routes),
     Include('/menu/v1/menus', menus_routes),
     Include('/menu/v1/items', items_routes)
