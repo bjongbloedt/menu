@@ -1,9 +1,17 @@
 import typing
 import uuid
-from project.schemas import MenusSchema, ItemsSchema, AddMenuRequestSchema, RestaurantsSchema, AddRestaurantSchema, UpdateRestaurantSchema
 from project.models import ItemsModel, MenusModel, RestaurantsModel
 from apistar.backends.sqlalchemy_backend import Session
 from apistar import Response
+from project.schemas import (
+    MenusSchema,
+    ItemsSchema,
+    AddMenuRequestSchema,
+    RestaurantsSchema,
+    AddRestaurantSchema,
+    UpdateRestaurantSchema,
+    UpdateMenusSchema
+)
 
 
 def ping():
@@ -116,5 +124,49 @@ def remove_restaurant(session: Session, restaurant_id: str):
         .delete()
     if(update < 1):
         data = {'message': f'unable to delete restaurant {restaurant_id}'}
+        return Response(data, status=404)
+    return Response({}, status=204)
+
+def update_menu(session: Session, menu_id: str, update_request: UpdateMenusSchema) -> MenusSchema:
+    """
+    Update a menu
+    """
+    name_length = len(update_request.get('name', ''))
+    desc_length = len(update_request.get('description', ''))
+
+    if (name_length > 0 and desc_length > 0):
+        update = session.query(MenusModel) \
+            .filter(MenusModel.id==menu_id) \
+            .update({'name': update_request['name'], 'description': update_request['description']})
+    elif (name_length > 0):
+        update = session.query(MenusModel) \
+            .filter(MenusModel.id==menu_id) \
+            .update({'name': update_request['name']})
+    elif (desc_length > 0):
+        update = session.query(MenusModel) \
+            .filter(MenusModel.id==menu_id) \
+            .update({'description': update_request['description']})
+    else:
+        data = {'message': f'unable to update menu {menu_id} without name or description provided'}
+        return Response(data, status=400)
+
+    if(update < 1):
+        data = {'message': f'unable to update menu {menu_id}'}
+        return Response(data, status=404)
+    query = session.query(MenusModel).filter(MenusModel.id == menu_id).first()
+    return Response(MenusSchema(id=menu_id, name=query.name, description=query.description), status=200)
+
+def remove_menu(session: Session, menu_id: str):
+    """
+    remove a menu
+    """
+    if(len(menu_id) <= 0):
+        data = {'message': f'must provide id'}
+        return Response(data, status=400)
+    update = session.query(MenusModel) \
+        .filter(MenusModel.id==menu_id) \
+        .delete()
+    if(update < 1):
+        data = {'message': f'unable to delete menu {menu_id}'}
         return Response(data, status=404)
     return Response({}, status=204)

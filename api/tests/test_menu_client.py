@@ -34,4 +34,55 @@ def test_ping_request(client_empty_db):
     response = client_empty_db.get('http://localhost/healthz')
     assert response.status_code == 200
     assert response.json() == {'message': 'ok'}
+
+def test_menu_client_workflow(client_empty_db):
+    # Create new restaurant
+    response = client_empty_db.post('http://localhost/menu/v1/restaurants', json={
+        'name': 'Cool place'
+    })
+    assert response.status_code == 201
+    assert response.json()['name'] == 'Cool place'
+    restaurant_id = response.json()['id']
+    assert restaurant_id is not None
+
+    # Create new menu
+    create_menu_response = client_empty_db.post(f'http://localhost/menu/v1/restaurants/{restaurant_id}/menus', json={
+        'name': 'Cool place, first menu',
+        'description': 'A really great menu'
+    })
+    assert create_menu_response.status_code == 201
+    assert create_menu_response.json()['name'] == 'Cool place, first menu'
+    assert create_menu_response.json()['description'] == 'A really great menu'
+    menu_id = create_menu_response.json()['id']
+    assert menu_id is not None
+
+    # Change the name
+    change_name_response = client_empty_db.put(f'http://localhost/menu/v1/menus/{menu_id}', json={
+        'name': 'Better name'
+    })
+    assert change_name_response.status_code == 200
+    assert change_name_response.json()['name'] == 'Better name'
+    assert create_menu_response.json()['description'] == 'A really great menu'
+    assert change_name_response.json()['id'] == menu_id
+
+    # Add a item
+    # add_menu_request = client_empty_db.post(f'http://localhost/menu/v1/menus/{menu_id}/items', json={
+    #     'name': 'A cool menu',
+    #     'description': 'a really cool menu'
+    # })
+    # assert add_menu_request.status_code == 201
+    # assert add_menu_request.json()['name'] == 'A cool menu'
+    # assert add_menu_request.json()['description'] == 'a really cool menu'
+    # assert add_menu_request.json()['id'] is not None
+
+    # Get the menu
+    get_menu = client_empty_db.get(f'http://localhost/menu/v1/menus/{menu_id}')
+    assert get_menu.status_code == 200
+    assert get_menu.json()['name'] == 'Better name'
+    assert get_menu.json()['description'] == 'A really great menu'
+    assert get_menu.json()['id'] == menu_id
+
+    # Delete menu
+    delete_menu = client_empty_db.delete(f'http://localhost/menu/v1/menus/{menu_id}')
+    assert delete_menu.status_code == 204
     

@@ -25,6 +25,14 @@ class MenusSchema(typesystem.Object):
         'restaurant_id': typesystem.String
     }
 
+class UpdateMenusSchema(typesystem.Object):
+    """
+    Request to update Menu
+    """
+    properties = {
+        'name': typesystem.String,
+        'description': typesystem.String
+    }
 
 class AddMenuRequestSchema(typesystem.Object):
     """
