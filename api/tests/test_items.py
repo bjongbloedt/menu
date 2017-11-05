@@ -1,6 +1,6 @@
 from project.models import MenusModel, ItemsModel, RestaurantsModel
 from project.schemas import MenusSchema, ItemsSchema, AddMenuRequestSchema
-from project.views import add_item_to_menu, remove_item
+from project.views import add_item_to_menu, remove_item, get_item_by_id
 
 
 def test_add_new_item_should_create_new_menu(db_session):
@@ -72,3 +72,30 @@ def test_remove_item_should_not_remove_when_id_does_not_exist(db_session):
     data = remove_item(db_session, '45')
     assert data.status == 404
     assert data.content == {'message': 'unable to delete item 45'}
+
+def test_get_item_by_id(db_session):
+    """
+    Test getting a single item
+    """
+    restaurant = RestaurantsModel(id='1', name='Cool place')
+    db_session.add(restaurant)
+    db_session.commit()
+    menu = MenusModel(id="1", name="my first menu", description="The best first menu", restaurant_id="1")
+    db_session.add(menu)
+    db_session.commit()
+    item = ItemsModel(id="54321", name="sandwich one", price=9.99, image="http://image.com/image", section="sandwiches", menu_id="1")
+    db_session.add(item)
+    db_session.commit()
+
+    data = get_item_by_id(db_session, '54321')
+    assert data.status == 200
+    assert data.content == {'id': '54321', 'name': 'sandwich one', 'price': 9.99, 'image': 'http://image.com/image', 'section': 'sandwiches', 'menu_id': '1'}
+
+def test_get_item_by_id_should_return_error(db_session):
+    """
+    Test getting a single item
+    """
+    data = get_item_by_id(db_session, '1234123')
+    assert data.status == 404
+    assert data.content ==\
+        {'message': 'item with id 1234123 was not found'}

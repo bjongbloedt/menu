@@ -208,3 +208,13 @@ def remove_item(session: Session, item_id: str):
         data = {'message': f'unable to delete item {item_id}'}
         return Response(data, status=404)
     return Response({}, status=204)
+
+def get_item_by_id(session: Session, item_id: str) -> ItemsSchema:
+    """
+    Gets a specific item by id
+    """
+    query = session.query(ItemsModel).filter(ItemsModel.id == item_id).first()
+    if(query is None):
+        data = {'message': f'item with id {item_id} was not found'}
+        return Response(data, status=404)
+    return Response(ItemsSchema(query), status=200)

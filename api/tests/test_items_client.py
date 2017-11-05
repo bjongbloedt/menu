@@ -35,8 +35,18 @@ def test_item_client_workflow(client_empty_db):
     assert item_id is not None
 
     # Get items by menu
+    get_items_by_menu = client_empty_db.get(f'http://localhost/menu/v1/menus/{menu_id}/items')
+    assert get_items_by_menu.status_code == 200
+    assert len(get_items_by_menu.json()) == 1
 
     # Get item
+    get_item = client_empty_db.get(f'http://localhost/menu/v1/items/{item_id}')
+    assert get_item.status_code == 200
+    assert get_item.json()['name'] == 'root beer'
+    assert get_item.json()['price'] == 1.99
+    assert get_item.json()['image'] == 'http://image-of-rootbeer.net'
+    assert get_item.json()['section'] == 'drinks'
+    assert get_item.json()['id'] == item_id
 
     # Delete Item
     remove_item_response = client_empty_db.delete(f'http://localhost/menu/v1/items/{item_id}')
