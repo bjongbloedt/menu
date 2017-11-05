@@ -51,3 +51,11 @@ class AddRestaurantSchema(typesystem.Object):
     properties = {
         'name': typesystem.String
     }
+
+class UpdateRestaurantSchema(typesystem.Object):
+    """
+    Request to update a restaurant
+    """
+    properties = {
+        'name': typesystem.String
+    }

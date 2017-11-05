@@ -1,6 +1,6 @@
 import typing
 import uuid
-from project.schemas import MenusSchema, ItemsSchema, AddMenuRequestSchema, RestaurantsSchema, AddRestaurantSchema
+from project.schemas import MenusSchema, ItemsSchema, AddMenuRequestSchema, RestaurantsSchema, AddRestaurantSchema, UpdateRestaurantSchema
 from project.models import ItemsModel, MenusModel, RestaurantsModel
 from apistar.backends.sqlalchemy_backend import Session
 from apistar import Response
@@ -88,18 +88,33 @@ def get_restaurants(session: Session) -> typing.List[RestaurantsSchema]:
         return Response(data, status=404)
     return [RestaurantsSchema(i) for i in query]
 
-def update_restaurant_name(session: Session, restaurant_id: str, name: str) -> RestaurantsSchema:
+def update_restaurant_name(session: Session, restaurant_id: str, update_request: UpdateRestaurantSchema) -> RestaurantsSchema:
     """
     update the name of the restaurant
     """
-    if(len(name) <= 0):
-        data = {'message': f'unable to update restaurant {restaurant_id} with name {name}'}
+    if(len(update_request['name']) <= 0):
+        data = {'message': f'unable to update restaurant {restaurant_id} with name {update_request["name"]}'}
         return Response(data, status=400)
     update = session.query(RestaurantsModel) \
         .filter(RestaurantsModel.id==restaurant_id) \
-        .update({"name": name})
+        .update({'name': update_request['name']})
     session.commit()
     if(update < 1):
-        data = {'message': f'unable to update restaurant {restaurant_id} with name {name}'}
+        data = {'message': f'unable to update restaurant {restaurant_id} with name {update_request["name"]}'}
         return Response(data, status=404)
-    return Response(RestaurantsSchema(id=restaurant_id, name=name), status=200)
+    return Response(RestaurantsSchema(id=restaurant_id, name=update_request['name']), status=200)
+
+def remove_restaurant(session: Session, restaurant_id: str):
+    """
+    remove a restaurant
+    """
+    if(len(restaurant_id) <= 0):
+        data = {'message': f'must provide id'}
+        return Response(data, status=400)
+    update = session.query(RestaurantsModel) \
+        .filter(RestaurantsModel.id==restaurant_id) \
+        .delete()
+    if(update < 1):
+        data = {'message': f'unable to delete restaurant {restaurant_id}'}
+        return Response(data, status=404)
+    return Response({}, status=204)

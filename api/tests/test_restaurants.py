@@ -1,4 +1,4 @@
-from project.views import get_restaurant_by_id, add_restaurant, get_restaurants, update_restaurant_name
+from project.views import get_restaurant_by_id, add_restaurant, get_restaurants, update_restaurant_name, remove_restaurant
 from project.models import RestaurantsModel
 from project.schemas import RestaurantsSchema
 
@@ -70,9 +70,12 @@ def test_put_update_restaurant_name_should_update_name(db_session):
     ])
     db_session.commit()
 
-    data = update_restaurant_name(db_session, '1', 'Another place')
+    data = update_restaurant_name(db_session, '1', {'name': 'Another place'})
     assert data.status == 200
     assert data.content['name'] == 'Another place'
+
+    query = db_session.query(RestaurantsModel).filter(RestaurantsModel.name == 'Another place').all()
+    assert len(query) == 1
 
 def test_put_update_restaurant_name_should_return_NotFound_when_id_is_bad(db_session):
     """
@@ -85,9 +88,12 @@ def test_put_update_restaurant_name_should_return_NotFound_when_id_is_bad(db_ses
     ])
     db_session.commit()
 
-    data = update_restaurant_name(db_session, '4', 'Another place')
+    data = update_restaurant_name(db_session, '4', {'name': 'Another place'})
     assert data.status == 404
     assert data.content == {'message': 'unable to update restaurant 4 with name Another place'}
+
+    query = db_session.query(RestaurantsModel).filter(RestaurantsModel.name == 'Another place').all()
+    assert len(query) == 0
 
 def test_put_update_restaurant_name_should_return_NotFound_name_is_empty(db_session):
     """
@@ -100,6 +106,57 @@ def test_put_update_restaurant_name_should_return_NotFound_name_is_empty(db_sess
     ])
     db_session.commit()
 
-    data = update_restaurant_name(db_session, '3', '')
+    data = update_restaurant_name(db_session, '3', {'name': ''})
     assert data.status == 400
     assert data.content == {'message': 'unable to update restaurant 3 with name '}
+
+    query = db_session.query(RestaurantsModel).filter(RestaurantsModel.name == '').all()
+    assert len(query) == 0
+
+def test_remove_restaurant_should_remove(db_session):
+    """
+    Try to remove restaurant
+    """
+    db_session.add_all([
+        RestaurantsModel(id='1', name='Cool place'),
+        RestaurantsModel(id='2', name='Cool place'),
+        RestaurantsModel(id='3', name='Cool place')
+    ])
+    db_session.commit()
+
+    data = remove_restaurant(db_session, '1')
+    assert data.status == 204
+    assert data.content == {}
+
+    query = db_session.query(RestaurantsModel).filter(RestaurantsModel.id == 1).all()
+    assert len(query) == 0
+
+def test_remove_restaurant_should_not_remove_when_id_empty(db_session):
+    """
+    Try to remove restaurant
+    """
+    db_session.add_all([
+        RestaurantsModel(id='1', name='Cool place'),
+        RestaurantsModel(id='2', name='Cool place'),
+        RestaurantsModel(id='3', name='Cool place')
+    ])
+    db_session.commit()
+
+    data = remove_restaurant(db_session, '')
+    assert data.status == 400
+    assert data.content == {'message': 'must provide id'}
+
+def test_remove_restaurant_should_not_remove_when_id_does_not_exist(db_session):
+    """
+    Try to remove restaurant
+    """
+    db_session.add_all([
+        RestaurantsModel(id='1', name='Cool place'),
+        RestaurantsModel(id='2', name='Cool place'),
+        RestaurantsModel(id='3', name='Cool place')
+    ])
+    db_session.commit()
+
+    data = remove_restaurant(db_session, '45')
+    assert data.status == 404
+    assert data.content == {'message': 'unable to delete restaurant 45'}
