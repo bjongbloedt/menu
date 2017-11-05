@@ -20,6 +20,8 @@ After running those commands, the api should be avaiable at `http://localhost:50
 
 ### Via apistar (from scratch)
 
+Note that this way will not bootstrap data in sqlite
+
 #### Prereqs
 
 This project is based on python 3.6.  Please see this [link](https://docs.python.org/3/using/index.html) on information about installing python
