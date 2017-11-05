@@ -183,3 +183,13 @@ def add_item_to_menu(session: Session, menu_id: str, item_request: AddItemReques
     session.add(item)
     session.commit()
     return Response(ItemsSchema(id=item.id, name=item.name, price=item.price, image=item.image, section=item.section, menu_id=menu_id), status=201)
+
+def get_menus_for_restaurant(session: Session, restaurant_id: str) -> typing.List[MenusSchema]:
+    """
+    Gets all of the menus for the given restaurant_id
+    """
+    query = session.query(MenusModel).filter(MenusModel.restaurant_id == restaurant_id).all()
+    if(len(query) == 0):
+        data = {'message': f'menus for the restaurant with id {restaurant_id} were not found'}
+        return Response(data, status=404)
+    return Response([MenusSchema(i) for i in query], 200)

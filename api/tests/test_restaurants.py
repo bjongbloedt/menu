@@ -1,5 +1,5 @@
-from project.views import get_restaurant_by_id, add_restaurant, get_restaurants, update_restaurant_name, remove_restaurant
-from project.models import RestaurantsModel
+from project.views import get_restaurant_by_id, add_restaurant, get_restaurants, update_restaurant_name, remove_restaurant, get_menus_for_restaurant
+from project.models import RestaurantsModel, MenusModel
 from project.schemas import RestaurantsSchema
 
 
@@ -160,3 +160,49 @@ def test_remove_restaurant_should_not_remove_when_id_does_not_exist(db_session):
     data = remove_restaurant(db_session, '45')
     assert data.status == 404
     assert data.content == {'message': 'unable to delete restaurant 45'}
+
+def test_get_menus_for_restaurant_should_return_menus(db_session):
+    """
+    Test getting all items for a menu
+    """
+    restaurant = RestaurantsModel(id='1', name='Cool place')
+    db_session.add(restaurant)
+    db_session.commit()
+    db_session.add_all([
+        MenusModel(id="2", name="my first menu", description="The best first menu", restaurant_id="1"),
+        MenusModel(id="3", name="my first menu", description="The best first menu", restaurant_id="1"),
+        MenusModel(id="4", name="my first menu", description="The best first menu", restaurant_id="1")
+    ])
+    db_session.commit()
+
+    data = get_menus_for_restaurant(db_session, '1')
+    assert len(data.content) == 3
+
+def test_get_menus_for_restaurant_should_return_error_if_menu_is_not_found(db_session):
+    """
+    Test getting all items for a menu
+    """
+
+    data = get_menus_for_restaurant(db_session, '50')
+    assert data.status == 404
+    assert data.content ==\
+        {'message': 'menus for the restaurant with id 50 were not found'}
+
+def test_get_menus_for_restaurant_should_return_empty_list_if_no_items_match_menu_id(db_session):
+    """
+    Test getting all items for a menu
+    """
+    restaurant = RestaurantsModel(id='1', name='Cool place')
+    db_session.add(restaurant)
+    db_session.commit()
+    db_session.add_all([
+        MenusModel(id="2", name="my first menu", description="The best first menu", restaurant_id="1"),
+        MenusModel(id="3", name="my first menu", description="The best first menu", restaurant_id="1"),
+        MenusModel(id="4", name="my first menu", description="The best first menu", restaurant_id="1")
+    ])
+    db_session.commit()
+
+    data = get_menus_for_restaurant(db_session, '12345')
+    assert data.status == 404
+    assert data.content ==\
+        {'message': 'menus for the restaurant with id 12345 were not found'}
