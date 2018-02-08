@@ -14,6 +14,7 @@ class ItemsSchema(typesystem.Object):
         'menu_id': typesystem.String
     }
 
+
 class AddItemRequestSchema(typesystem.Object):
     """
     Menu item schema
@@ -24,6 +25,7 @@ class AddItemRequestSchema(typesystem.Object):
         'image': typesystem.String,
         'section': typesystem.String
     }
+
 
 class MenusSchema(typesystem.Object):
     """
@@ -36,6 +38,7 @@ class MenusSchema(typesystem.Object):
         'restaurant_id': typesystem.String
     }
 
+
 class UpdateMenusSchema(typesystem.Object):
     """
     Request to update Menu
@@ -44,6 +47,7 @@ class UpdateMenusSchema(typesystem.Object):
         'name': typesystem.String,
         'description': typesystem.String
     }
+
 
 class AddMenuRequestSchema(typesystem.Object):
     """
@@ -54,6 +58,7 @@ class AddMenuRequestSchema(typesystem.Object):
         'description': typesystem.String
     }
 
+
 class RestaurantsSchema(typesystem.Object):
     """
     Restaurant Schema
@@ -63,6 +68,7 @@ class RestaurantsSchema(typesystem.Object):
         'name': typesystem.String
     }
 
+
 class AddRestaurantSchema(typesystem.Object):
     """
     Request to add new restaurant
@@ -70,6 +76,7 @@ class AddRestaurantSchema(typesystem.Object):
     properties = {
         'name': typesystem.String
     }
+
 
 class UpdateRestaurantSchema(typesystem.Object):
     """

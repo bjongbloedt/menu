@@ -1,22 +1,13 @@
 from apistar import Include, Route
 from apistar.handlers import docs_urls, static_urls
-from project.views import (
-    get_items_for_menu,
-    get_menu_by_id,
-    get_menus, ping,
-    add_menu_to_restaurant,
-    get_restaurant_by_id,
-    add_restaurant,
-    get_restaurants,
-    update_restaurant_name,
-    remove_restaurant,
-    update_menu,
-    remove_menu,
-    add_item_to_menu,
-    get_menus_for_restaurant,
-    remove_item,
-    get_item_by_id
-)
+
+from .views import (add_item_to_menu, add_menu_to_restaurant,
+                    add_restaurant, get_item_by_id,
+                    get_items_for_menu, get_menu_by_id, get_menus,
+                    get_menus_for_restaurant, get_restaurant_by_id,
+                    get_restaurants, ping, remove_item, remove_menu,
+                    remove_restaurant, update_menu,
+                    update_restaurant_name)
 
 restaurants_routes = [
     Route('/{rest_id}/menus', 'POST', add_menu_to_restaurant),

@@ -1,4 +1,5 @@
-from project.views import ping
+from api.project.views import ping
+
 
 def test_ping():
     """

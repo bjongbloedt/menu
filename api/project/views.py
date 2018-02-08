@@ -1,18 +1,14 @@
 import typing
 import uuid
-from project.models import ItemsModel, MenusModel, RestaurantsModel
-from apistar.backends.sqlalchemy_backend import Session
+
 from apistar import Response
-from project.schemas import (
-    MenusSchema,
-    ItemsSchema,
-    AddMenuRequestSchema,
-    RestaurantsSchema,
-    AddRestaurantSchema,
-    UpdateRestaurantSchema,
-    UpdateMenusSchema,
-    AddItemRequestSchema
-)
+from apistar.backends.sqlalchemy_backend import Session
+
+from .models import ItemsModel, MenusModel, RestaurantsModel
+from .schemas import (AddItemRequestSchema, AddMenuRequestSchema,
+                      AddRestaurantSchema, ItemsSchema, MenusSchema,
+                      RestaurantsSchema, UpdateMenusSchema,
+                      UpdateRestaurantSchema)
 
 
 def ping():
@@ -20,6 +16,7 @@ def ping():
     Healthcheck endpoint
     """
     return {'message': 'ok'}
+
 
 def get_menu_by_id(session: Session, menu_id: str) -> MenusSchema:
     """
@@ -31,6 +28,7 @@ def get_menu_by_id(session: Session, menu_id: str) -> MenusSchema:
         return Response(data, status=404)
     return Response(MenusSchema(query), 200)
 
+
 def get_menus(session: Session) -> MenusSchema:
     """
     Gets a specific menu by id
@@ -41,15 +39,19 @@ def get_menus(session: Session) -> MenusSchema:
         return Response(data, status=404)
     return Response([MenusSchema(i) for i in query], 200)
 
+
 def get_items_for_menu(session: Session, menu_id: str) -> typing.List[ItemsSchema]:
     """
     Gets all of the items for the given menu_id
     """
-    query = session.query(ItemsModel).filter(ItemsModel.menu_id == menu_id).all()
+    query = session.query(ItemsModel) \
+                   .filter(ItemsModel.menu_id == menu_id) \
+                   .all()
     if(len(query) == 0):
         data = {'message': f'items for the menu with id {menu_id} were not found'}
         return Response(data, status=404)
     return Response([ItemsSchema(i) for i in query], status=200)
+
 
 def add_menu_to_restaurant(session: Session, rest_id: str, menu_request: AddMenuRequestSchema) -> MenusSchema:
     """
@@ -59,20 +61,24 @@ def add_menu_to_restaurant(session: Session, rest_id: str, menu_request: AddMenu
         data = {'message': 'menu request invalid'}
         return Response(data, status=400)
 
-    menu = MenusModel(id=str(uuid.uuid4()), name=menu_request['name'], description=menu_request['description'], restaurant_id=rest_id)
+    menu = MenusModel(id=str(uuid.uuid4(
+    )), name=menu_request['name'], description=menu_request['description'], restaurant_id=rest_id)
     session.add(menu)
     session.commit()
     return Response(MenusSchema(id=menu.id, name=menu.name, description=menu.description, restaurant_id=menu.restaurant_id), status=201)
+
 
 def get_restaurant_by_id(session: Session, restaurant_id: str) -> RestaurantsSchema:
     """
     Gets a specific restaurant by id
     """
-    query = session.query(RestaurantsModel).filter(RestaurantsModel.id == restaurant_id).first()
+    query = session.query(RestaurantsModel).filter(
+        RestaurantsModel.id == restaurant_id).first()
     if(query is None):
         data = {'message': f'restaurant with id {restaurant_id} was not found'}
         return Response(data, status=404)
     return Response(RestaurantsSchema(query), status=200)
+
 
 def add_restaurant(session: Session, restaurant_request: AddRestaurantSchema) -> RestaurantsSchema:
     """
@@ -82,10 +88,12 @@ def add_restaurant(session: Session, restaurant_request: AddRestaurantSchema) ->
         data = {'message': 'restaurant request invalid'}
         return Response(data, status=400)
 
-    restaurant = RestaurantsModel(id=str(uuid.uuid4()), name=restaurant_request['name'])
+    restaurant = RestaurantsModel(
+        id=str(uuid.uuid4()), name=restaurant_request['name'])
     session.add(restaurant)
     session.commit()
     return Response(RestaurantsSchema(id=restaurant.id, name=restaurant.name), status=201)
+
 
 def get_restaurants(session: Session) -> typing.List[RestaurantsSchema]:
     """
@@ -97,21 +105,25 @@ def get_restaurants(session: Session) -> typing.List[RestaurantsSchema]:
         return Response(data, status=404)
     return Response([RestaurantsSchema(i) for i in query], status=200)
 
+
 def update_restaurant_name(session: Session, restaurant_id: str, update_request: UpdateRestaurantSchema) -> RestaurantsSchema:
     """
     update the name of the restaurant
     """
     if(len(update_request['name']) <= 0):
-        data = {'message': f'unable to update restaurant {restaurant_id} with name {update_request["name"]}'}
+        data = {
+            'message': f'unable to update restaurant {restaurant_id} with name {update_request["name"]}'}
         return Response(data, status=400)
     update = session.query(RestaurantsModel) \
-        .filter(RestaurantsModel.id==restaurant_id) \
+        .filter(RestaurantsModel.id == restaurant_id) \
         .update({'name': update_request['name']})
     session.commit()
     if(update < 1):
-        data = {'message': f'unable to update restaurant {restaurant_id} with name {update_request["name"]}'}
+        data = {
+            'message': f'unable to update restaurant {restaurant_id} with name {update_request["name"]}'}
         return Response(data, status=404)
     return Response(RestaurantsSchema(id=restaurant_id, name=update_request['name']), status=200)
+
 
 def remove_restaurant(session: Session, restaurant_id: str):
     """
@@ -121,12 +133,13 @@ def remove_restaurant(session: Session, restaurant_id: str):
         data = {'message': f'must provide id'}
         return Response(data, status=400)
     update = session.query(RestaurantsModel) \
-        .filter(RestaurantsModel.id==restaurant_id) \
+        .filter(RestaurantsModel.id == restaurant_id) \
         .delete()
     if(update < 1):
         data = {'message': f'unable to delete restaurant {restaurant_id}'}
         return Response(data, status=404)
     return Response({}, status=204)
+
 
 def update_menu(session: Session, menu_id: str, update_request: UpdateMenusSchema) -> MenusSchema:
     """
@@ -137,18 +150,19 @@ def update_menu(session: Session, menu_id: str, update_request: UpdateMenusSchem
 
     if (name_length > 0 and desc_length > 0):
         update = session.query(MenusModel) \
-            .filter(MenusModel.id==menu_id) \
+            .filter(MenusModel.id == menu_id) \
             .update({'name': update_request['name'], 'description': update_request['description']})
     elif (name_length > 0):
         update = session.query(MenusModel) \
-            .filter(MenusModel.id==menu_id) \
+            .filter(MenusModel.id == menu_id) \
             .update({'name': update_request['name']})
     elif (desc_length > 0):
         update = session.query(MenusModel) \
-            .filter(MenusModel.id==menu_id) \
+            .filter(MenusModel.id == menu_id) \
             .update({'description': update_request['description']})
     else:
-        data = {'message': f'unable to update menu {menu_id} without name or description provided'}
+        data = {
+            'message': f'unable to update menu {menu_id} without name or description provided'}
         return Response(data, status=400)
 
     if(update < 1):
@@ -156,6 +170,7 @@ def update_menu(session: Session, menu_id: str, update_request: UpdateMenusSchem
         return Response(data, status=404)
     query = session.query(MenusModel).filter(MenusModel.id == menu_id).first()
     return Response(MenusSchema(id=menu_id, name=query.name, description=query.description), status=200)
+
 
 def remove_menu(session: Session, menu_id: str):
     """
@@ -165,12 +180,13 @@ def remove_menu(session: Session, menu_id: str):
         data = {'message': f'must provide id'}
         return Response(data, status=400)
     update = session.query(MenusModel) \
-        .filter(MenusModel.id==menu_id) \
+        .filter(MenusModel.id == menu_id) \
         .delete()
     if(update < 1):
         data = {'message': f'unable to delete menu {menu_id}'}
         return Response(data, status=404)
     return Response({}, status=204)
+
 
 def add_item_to_menu(session: Session, menu_id: str, item_request: AddItemRequestSchema) -> ItemsSchema:
     """
@@ -179,20 +195,26 @@ def add_item_to_menu(session: Session, menu_id: str, item_request: AddItemReques
     if not item_request:
         data = {'message': 'item request invalid'}
         return Response(data, status=400)
-    item = ItemsModel(id=str(uuid.uuid4()), name=item_request['name'], price=item_request['price'], image=item_request['image'], section=item_request['section'], menu_id=menu_id)
+    item = ItemsModel(id=str(uuid.uuid4()), name=item_request['name'], price=item_request['price'],
+                      image=item_request['image'], section=item_request['section'], menu_id=menu_id)
     session.add(item)
     session.commit()
     return Response(ItemsSchema(id=item.id, name=item.name, price=item.price, image=item.image, section=item.section, menu_id=menu_id), status=201)
+
 
 def get_menus_for_restaurant(session: Session, restaurant_id: str) -> typing.List[MenusSchema]:
     """
     Gets all of the menus for the given restaurant_id
     """
-    query = session.query(MenusModel).filter(MenusModel.restaurant_id == restaurant_id).all()
+    query = session.query(MenusModel) \
+                   .filter(MenusModel.restaurant_id == restaurant_id) \
+                   .all()
     if(len(query) == 0):
-        data = {'message': f'menus for the restaurant with id {restaurant_id} were not found'}
+        data = {
+            'message': f'menus for the restaurant with id {restaurant_id} were not found'}
         return Response(data, status=404)
     return Response([MenusSchema(i) for i in query], 200)
+
 
 def remove_item(session: Session, item_id: str):
     """
@@ -202,12 +224,13 @@ def remove_item(session: Session, item_id: str):
         data = {'message': f'must provide id'}
         return Response(data, status=400)
     update = session.query(ItemsModel) \
-        .filter(ItemsModel.id==item_id) \
+        .filter(ItemsModel.id == item_id) \
         .delete()
     if(update < 1):
         data = {'message': f'unable to delete item {item_id}'}
         return Response(data, status=404)
     return Response({}, status=204)
+
 
 def get_item_by_id(session: Session, item_id: str) -> ItemsSchema:
     """

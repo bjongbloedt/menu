@@ -1,11 +1,10 @@
 import pytest
-import os
-import uuid
-from project.models import Base
+from apistar.test import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from apistar.test import TestClient
-from app import app
+
+from api.project.models import Base
+from api.app import app
 
 
 @pytest.fixture(scope="function")

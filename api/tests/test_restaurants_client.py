@@ -27,11 +27,12 @@ def test_restaurant_client_workflow(client_empty_db):
     assert add_menu_request.json()['id'] is not None
 
     # Get the restaurant
-    get_restaurant = client_empty_db.get(f'http://localhost/menu/v1/restaurants/{restaurant_id}')
+    get_restaurant = client_empty_db.get(
+        f'http://localhost/menu/v1/restaurants/{restaurant_id}')
     assert get_restaurant.status_code == 200
     assert get_restaurant.json()['name'] == 'Better name'
 
-
     # Delete restaurant
-    delete_restaurant = client_empty_db.delete(f'http://localhost/menu/v1/restaurants/{restaurant_id}')
+    delete_restaurant = client_empty_db.delete(
+        f'http://localhost/menu/v1/restaurants/{restaurant_id}')
     assert delete_restaurant.status_code == 204

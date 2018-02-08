@@ -1,5 +1,6 @@
 from apistar import environment, typesystem
-from project.models import Base
+
+from .models import Base
 
 
 class Env(environment.Environment):
@@ -11,7 +12,9 @@ class Env(environment.Environment):
         'DATABASE_URL': typesystem.string(default='sqlite:///local.db')
     }
 
+
 env = Env()
+
 
 settings = {
     'DEBUG': env['DEBUG'],

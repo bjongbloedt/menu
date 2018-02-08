@@ -4,6 +4,7 @@ from sqlalchemy import Column, String, Float, ForeignKey
 
 Base = declarative_base()
 
+
 class ItemsModel(Base):
     __tablename__ = "items"
     id = Column(String, primary_key=True)
