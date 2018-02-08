@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM python:3.6.4-alpine
 
 WORKDIR /usr/src/app
 
@@ -6,14 +6,12 @@ WORKDIR /usr/src/app
 COPY Pipfile Pipfile
 COPY Pipfile.lock Pipfile.lock
 RUN pip install pipenv
-RUN pipenv install --ignore-pipfile --system
+RUN apk --update add --virtual build-base \
+ && pipenv install --ignore-pipfile --system \
+ && apk del build-base
 
 # Copy api src
 COPY . .
-
-# Adding inmem db for this example
-ENV DATABASE_URL "sqlite:///docker.db"
-RUN python load_db.py
 
 EXPOSE 5000
 

@@ -1,8 +1,8 @@
-from apistar.frameworks.wsgi import WSGIApp as App
 from apistar.backends import sqlalchemy_backend
-from project.routes import routes
-from project.settings import settings
+from apistar.frameworks.wsgi import WSGIApp as App
 
+from api.project.routes import routes
+from api.project.settings import settings
 
 app = App(
     routes=routes,
