@@ -1,0 +1,3 @@
+#!/bin/sh -e
+pipenv run flake8 project tests
+pipenv run pylint project tests

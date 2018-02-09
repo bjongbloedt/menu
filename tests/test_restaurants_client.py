@@ -1,6 +1,7 @@
 def test_restaurant_client_workflow(client_empty_db):
     # Create new restaurant
-    response = client_empty_db.post('http://localhost/menu/v1/restaurants', json={
+    all_restuarants_url = 'http://localhost/menu/v1/restaurants'
+    response = client_empty_db.post(all_restuarants_url, json={
         'name': 'Cool place'
     })
     assert response.status_code == 201
@@ -9,7 +10,8 @@ def test_restaurant_client_workflow(client_empty_db):
     assert restaurant_id is not None
 
     # Change the name
-    change_name_response = client_empty_db.put(f'http://localhost/menu/v1/restaurants/{restaurant_id}', json={
+    restaurant_url = f'http://localhost/menu/v1/restaurants/{restaurant_id}'
+    change_name_response = client_empty_db.put(restaurant_url, json={
         'name': 'Better name'
     })
     assert change_name_response.status_code == 200
@@ -17,7 +19,8 @@ def test_restaurant_client_workflow(client_empty_db):
     assert change_name_response.json()['id'] == restaurant_id
 
     # Add a menu
-    add_menu_request = client_empty_db.post(f'http://localhost/menu/v1/restaurants/{restaurant_id}/menus', json={
+    menus_url = f'http://localhost/menu/v1/restaurants/{restaurant_id}/menus'
+    add_menu_request = client_empty_db.post(menus_url, json={
         'name': 'A cool menu',
         'description': 'a really cool menu'
     })

@@ -1,5 +1,5 @@
-from api.project.models import MenusModel, ItemsModel, RestaurantsModel
-from api.project.views import add_item_to_menu, remove_item, get_item_by_id
+from ..project.models import MenusModel, ItemsModel, RestaurantsModel
+from ..project.views import add_item_to_menu, remove_item, get_item_by_id
 
 
 def test_add_new_item_should_create_new_menu(db_session):

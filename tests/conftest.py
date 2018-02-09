@@ -3,8 +3,8 @@ from apistar.test import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from api.project.models import Base
-from api.app import app
+from ..app import app
+from ..project.models import Base
 
 
 @pytest.fixture(scope="function")

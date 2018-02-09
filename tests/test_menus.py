@@ -1,5 +1,5 @@
-from api.project.models import MenusModel, ItemsModel, RestaurantsModel
-from api.project.views import (
+from ..project.models import MenusModel, ItemsModel, RestaurantsModel
+from ..project.views import (
     get_items_for_menu,
     get_menu_by_id,
     get_menus,
@@ -143,7 +143,7 @@ def test_get_menus_should_return_all_menus(db_session):
 
 def test_get_menus_should_return_NotFound_when_no_menus(db_session):
     """
-    Test that NotFound is returned when there are no menus 
+    Test that NotFound is returned when there are no menus
     """
     data = get_menus(db_session)
     assert data.content == {'message': 'no menus were found'}

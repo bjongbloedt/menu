@@ -65,7 +65,11 @@ def add_menu_to_restaurant(session: Session, rest_id: str, menu_request: AddMenu
     )), name=menu_request['name'], description=menu_request['description'], restaurant_id=rest_id)
     session.add(menu)
     session.commit()
-    return Response(MenusSchema(id=menu.id, name=menu.name, description=menu.description, restaurant_id=menu.restaurant_id), status=201)
+    return Response(MenusSchema(id=menu.id,
+                                name=menu.name,
+                                description=menu.description,
+                                restaurant_id=menu.restaurant_id),
+                    status=201)
 
 
 def get_restaurant_by_id(session: Session, restaurant_id: str) -> RestaurantsSchema:
@@ -106,7 +110,9 @@ def get_restaurants(session: Session) -> typing.List[RestaurantsSchema]:
     return Response([RestaurantsSchema(i) for i in query], status=200)
 
 
-def update_restaurant_name(session: Session, restaurant_id: str, update_request: UpdateRestaurantSchema) -> RestaurantsSchema:
+def update_restaurant_name(session: Session,
+                           restaurant_id: str,
+                           update_request: UpdateRestaurantSchema) -> RestaurantsSchema:
     """
     update the name of the restaurant
     """
@@ -199,7 +205,13 @@ def add_item_to_menu(session: Session, menu_id: str, item_request: AddItemReques
                       image=item_request['image'], section=item_request['section'], menu_id=menu_id)
     session.add(item)
     session.commit()
-    return Response(ItemsSchema(id=item.id, name=item.name, price=item.price, image=item.image, section=item.section, menu_id=menu_id), status=201)
+    return Response(ItemsSchema(id=item.id,
+                                name=item.name,
+                                price=item.price,
+                                image=item.image,
+                                section=item.section,
+                                menu_id=menu_id),
+                    status=201)
 
 
 def get_menus_for_restaurant(session: Session, restaurant_id: str) -> typing.List[MenusSchema]:

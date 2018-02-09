@@ -1,4 +1,4 @@
-from api.project.views import (
+from ..project.views import (
     get_restaurant_by_id,
     add_restaurant,
     get_restaurants,
@@ -6,7 +6,7 @@ from api.project.views import (
     remove_restaurant,
     get_menus_for_restaurant
 )
-from api.project.models import RestaurantsModel, MenusModel
+from ..project.models import RestaurantsModel, MenusModel
 
 
 def test_get_restaurant_by_id(db_session):
